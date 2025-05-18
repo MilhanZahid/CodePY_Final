@@ -1,0 +1,59 @@
+
+/* Chatbot Features */
+.chatbot-features {
+  padding: 50px 0;
+  background-color: rgba(10, 25, 41, 0.7);
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  margin-top: 50px;
+}
+
+.feature-card {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 30px;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.feature-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+.feature-icon {
+  font-size: 40px;
+  color: var(--accent-color);
+  margin-bottom: 20px;
+}
+
+.feature-card h3 {
+  font-size: 22px;
+  margin-bottom: 15px;
+}
+
+.feature-card p {
+  margin-bottom: 25px;
+  line-height: 1.6;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .chatbot-container {
+    height: 500px;
+  }
+
+  .suggestion-chips {
+    padding: 0 15px 10px;
+  }
+
+  .suggestion-chip {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+}

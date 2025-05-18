@@ -1,0 +1,83 @@
+<!-- templates/about.html -->
+{% extends "base.html" %}
+
+{% block title %}AI Chatbot - CodePy{% endblock %}
+
+{% block content %}
+<style>
+    .chatbot-section {
+        padding-top: 100px;
+        padding-bottom: 50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .chatbot-section .container {
+        width: 100%;
+        max-width: 1300px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    .chatbot-container {
+        background-color: rgba(255, 255, 255, 0.05);
+        border-radius: 15px;
+        overflow: hidden;
+        width: 100%;
+        max-width: 100%;
+        margin: 0 auto;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        display: flex;
+        flex-direction: column;
+        height: 600px;
+    }
+</style>
+
+<section class="chatbot-section">
+    <div class="container">
+        <div class="chatbot-container">
+            <iframe src="https://codepy-ai-assistant.vercel.app"
+                style="width: 100%; height: 100%; border: none; border-radius: 12px;"
+                allow="microphone; clipboard-read; clipboard-write"></iframe>
+        </div>
+    </div>
+</section>
+
+<section class="chatbot-features">
+    <div class="container">
+        <h2 class="section-title">Ask your AI Tutor for help</h2>
+        <p class="section-subtitle">Get instant help from our chatbot whether you're stuck on syntax or want to
+            understand a concept better</p>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-comments"></i>
+                </div>
+                <h3>24/7 Assistance</h3>
+                <p>Get help anytime with our AI tutor that's always available to answer your Python questions</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-code"></i>
+                </div>
+                <h3>Code Explanations</h3>
+                <p>Paste your code and get detailed explanations of how it works or how to fix errors</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <h3>Concept Clarification</h3>
+                <p>Ask about any Python concept and get clear, easy-to-understand explanations</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

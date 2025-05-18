@@ -1,0 +1,290 @@
+<!-- templates/about.html -->
+{% extends "base.html" %}
+
+{% block title %}Python Compiler - CodePy{% endblock %}
+
+{% block content %}
+<section class="compiler-section">
+    <div class="container">
+        <div class="compiler-header">
+            <h1>CodePy | Python online compiler</h1>
+            <div class="compiler-actions">
+                <button id="run-btn" class="btn">Run</button>
+                <button id="ask-ai-btn" class="btn btn-outline">Ask AI</button>
+            </div>
+        </div>
+
+
+
+        <div class="compiler-container">
+            <div class="editor-container">
+                <div class="file-tab">Main.py</div>
+                <div id="editor">
+                    <textarea id="code-editor">
+# Welcome to the Interactive Python Compiler
+# You can type your code here and run it with the Run button
+# This compiler supports standard Python modules!
+                        
+import random
+import math
+import datetime
+                        
+# Get user input
+name = input("What's your name? ")
+print(f"Hello, {name}!")
+                        
+# Working with modules
+current_time = datetime.datetime.now()
+print(f"Current time: {current_time.strftime('%Y-%m-%d %H:%M:%S')}")
+                        
+lucky_number = random.randint(1, 100)
+print(f"Your lucky number today is: {lucky_number}")
+                        
+# More interactivity
+age = int(input("How old are you? "))
+print(f"In 10 years, you'll be {age + 10} years old.")
+print(f"The square root of your age is approximately {math.sqrt(age):.2f}")
+                        
+print("\nThanks for using our interactive compiler!")</textarea>
+                </div>
+            </div>
+
+            <div class="output-container">
+                <div class="output-header">
+                    <h3>Output</h3>
+                    <button id="clear-output" class="btn-small">Clear</button>
+                </div>
+                <div id="output" class="output">
+                    <div class="output-content"></div>
+                </div>
+                <div id="input-area" class="input-container" style="display: none;">
+                    <span class="input-prompt">></span>
+                    <input type="text" id="user-input" placeholder="Enter your input here..." autocomplete="off">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="compiler-features">
+    <div class="container">
+        <h2 class="section-title">Write and run Python code instantly</h2>
+        <p class="section-subtitle">Our real-time Python compiler helps you learn through hands-on practice. No
+            installations, just code and run</p>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <h3>Instant Execution</h3>
+                <p>Run your Python code instantly without any setup or installation required</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <h3>AI Assistance</h3>
+                <p>Get help from our AI assistant when you're stuck or need code explanations</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-save"></i>
+                </div>
+                <h3>Save Your Work</h3>
+                <p>Create an account to save your code and access it from anywhere</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- AI Chat Pop-up -->
+<div id="ai-chat-popup" class="ai-chat-popup hidden">
+    <div class="chat-header">
+        <span>CodePy AI Assistant</span>
+        <button id="toggle-chat" class="toggle-btn">⮜</button>
+    </div>
+    <div class="chat-body" id="chat-body">
+        <div class="message-assistant">Hi! How can I help you with your code today?</div>
+    </div>
+    <div class="chat-input">
+        <textarea id="ai-user-input" placeholder="Type your message..."></textarea>
+    </div>
+    <button id="send-btn">Send</button>
+
+</div>
+
+
+<!-- compiler scripts -->
+<script src="{{ url_for('static', filename='js/compiler.js') }}"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/python.min.js"></script>
+<script src="{{ url_for('static', filename='js/shared-chat.js') }}"></script>
+
+<!-- ai pop up and assistant  -->
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const chatMessages = document.getElementById("chat-body");
+        const userInput = document.getElementById("ai-user-input");
+        const sendBtn = document.getElementById("send-btn");
+
+        // Handle popup toggle
+        const aiChatPopup = document.getElementById("ai-chat-popup");
+        const askAiBtn = document.getElementById("ask-ai-btn");
+        const toggleChat = document.getElementById("toggle-chat");
+
+        if (askAiBtn && aiChatPopup) {
+            askAiBtn.addEventListener("click", () => {
+                aiChatPopup.classList.remove("hidden");
+            });
+        }
+
+        if (toggleChat && aiChatPopup) {
+            toggleChat.addEventListener("click", () => {
+                aiChatPopup.classList.add("hidden");
+            });
+        }
+
+        // Auto-resize textarea
+        userInput.addEventListener("input", function () {
+            this.style.height = "auto";
+            this.style.height = Math.min(this.scrollHeight, 120) + "px";
+        });
+
+        // Handle Enter key
+        userInput.addEventListener("keydown", function (e) {
+            if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                handleSend();
+            }
+        });
+
+        sendBtn.addEventListener("click", handleSend);
+
+        async function handleSend() {
+            const message = userInput.value.trim();
+            if (!message) return;
+
+            console.log("Sending message:", message); // Debug log
+
+            // Add user message
+            addMessage("user", message);
+            userInput.value = "";
+            userInput.style.height = "auto";
+
+            // Show loading indicator
+            const loadingId = "loading-" + Date.now();
+            const loadingDiv = document.createElement("div");
+            loadingDiv.className = "message assistant";
+            loadingDiv.id = loadingId;
+            loadingDiv.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Thinking...';
+            chatMessages.appendChild(loadingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            try {
+                const response = await fetch("/api/ask", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ query: message })
+                });
+
+                console.log("Response status:", response.status); // Debug log
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log("Response data:", data); // Debug log
+
+                // Remove loading indicator
+                const loadingElement = document.getElementById(loadingId);
+                if (loadingElement) loadingElement.remove();
+
+                // Handle response
+                if (data.error) {
+                    addMessage("assistant", `Error: ${data.error}`, true);
+                } else {
+                    const answer = data.answer || data.response;
+                    const code = data.code;
+
+                    if (code) {
+                        addMessage("assistant",
+                            `<p>${answer}</p>
+                         <div class="code-block">
+                            <pre><code class="language-python">${escapeHTML(code)}</code></pre>
+                         </div>`,
+                            true);
+                    } else {
+                        addMessage("assistant", answer);
+                    }
+                }
+            } catch (error) {
+                console.error("Fetch error:", error);
+                const loadingElement = document.getElementById(loadingId);
+                if (loadingElement) loadingElement.remove();
+                addMessage("assistant", `Error: ${error.message}`, true);
+            }
+        }
+
+        function addMessage(role, content, isHTML = false) {
+            const messageDiv = document.createElement("div");
+            messageDiv.className = `message ${role}`;
+
+            const messageContent = document.createElement("div");
+            messageContent.className = "message-content";
+
+            if (isHTML) {
+                messageContent.innerHTML = content;
+            } else {
+                messageContent.textContent = content;
+            }
+
+            // Highlight code and add copy button
+            messageContent.querySelectorAll('pre code').forEach((block) => {
+                hljs.highlightElement(block);
+                
+                const copyBtn = document.createElement('button');
+                copyBtn.className = 'copy-code-btn';
+                copyBtn.innerHTML = '<i class="far fa-copy"></i>';
+                copyBtn.title = 'Copy code';
+                copyBtn.addEventListener('click', () => {
+                    navigator.clipboard.writeText(block.textContent);
+                    copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+                    setTimeout(() => {
+                        copyBtn.innerHTML = '<i class="far fa-copy"></i>';
+                    }, 2000);
+                });
+                
+                block.parentNode.insertBefore(copyBtn, block);
+            });
+
+            messageDiv.appendChild(messageContent);
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function escapeHTML(str) {
+            return str
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    });
+</script>
+
+{% endblock %}
