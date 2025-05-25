@@ -54,7 +54,7 @@ Installation and Setup:
 3. Run the application (locally):
    python app.py
 
-   The app will be available at http://127.0.0.1:5000 (local link)
+4. The app will be available at https://codepyfinal-production.up.railway.app/
 
 Notes:
 ------
